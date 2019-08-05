@@ -2,11 +2,19 @@ let mysql = require("../config/mysql");
 let connection = mysql.mysqlConnection();
 let DBHelper = require("../config/functions");
 
+exports.dashboard = ()=>{
+const schoolsCount = `select count(*) cnt from schools`;
+const usersCount = `select count(*) cnt from users `;
+const studentsCount = `select count(*) cnt from students`;
+const templateRequest = `select count(*) cnt from template_request where resolved = 0 `;
+const creditsCount = `select count(if(type=1,type,null)) email, count(if(type=2,type,null)) mobile, count(if(type=3,type,null)) voice from notify_log `;
+}
 exports.listOfschools = function () {
     const sql = 'select * from schools where isDeleted=0';
     return DBHelper.getSql(connection, sql)
 }
 exports.addSchool = function (req) {
+    req.user_name += 'admin@';
     return userNameAvailability(req.user_name)
         .then(() => {
             //Make user credentials for school management
@@ -41,6 +49,27 @@ function userNameAvailability(user_name) {
             throw 'User name not available';
         })
 }
-exports.editSchool = function (req) {
-    
+exports.editSchool = function (req,id) {
+    const sqlObj = DBHelper.genUpdate("schools",req);
+    sqlObj.sql += ' where id = ? ';
+    sqlObj.valueArr.push(id);
+    return DBHelper.getSql(connection, sqlObj.sql,sqlObj.valueArr);
+}
+exports.editSchoolPassword = function (req,id) {
+    return DBHelper.getSql(connection, 'select user_id from schools where id = ? ', [id],0)
+    .then((res)=>{
+        const sqlObj = DBHelper.genUpdate("users",req);
+        sqlObj.sql += ' where id = ? ';
+        sqlObj.valueArr.push(res.user_id);
+        return DBHelper.getSql(connection, sqlObj.sql,sqlObj.valueArr);
+    })
+}
+exports.deleteSchool = function (id) {
+    return DBHelper.getSql(connection, 'select user_id from schools where id = ? ', [id],0)
+    .then((res)=>{
+        return DBHelper.getSql(connection, `delete from users where id = ?`,[res.user_id])
+    })
+    .then(()=>{
+        return DBHelper.getSql(connection, 'delete from schools where id = ? ', [id])
+    })
 }
