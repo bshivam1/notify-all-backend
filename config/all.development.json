@@ -1,9 +1,9 @@
 {
     "mysql": {
-        "host": "127.0.0.1",
-        "user": "root",
-        "password": "hrhk",
-        "database": "notify_all",
+        "host": "sql12.freesqldatabase.com",
+        "user": "sql12300859",
+        "password": "aGkbNV8RRp",
+        "database": "sql12300859",
         "port": 3306
     }
 }

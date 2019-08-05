@@ -2,6 +2,7 @@
 module.exports = function(app, passport) {
 
 	require('./super_admin')(app,passport);
+	require('./school_admin')(app,passport);
 	// process the login form
 	app.post('/login', passport.authenticate('local-login'),
         function(req, res) {

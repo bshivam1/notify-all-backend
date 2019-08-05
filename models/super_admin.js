@@ -14,6 +14,7 @@ exports.listOfschools = function () {
     return DBHelper.getSql(connection, sql)
 }
 exports.addSchool = function (req) {
+    req.user_name += 'admin@';
     return userNameAvailability(req.user_name)
         .then(() => {
             //Make user credentials for school management
